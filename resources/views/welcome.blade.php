@@ -81,6 +81,7 @@
                 	    </div>
                 	</v-container>
                 </v-content>
+                <!--
                 <v-footer app height="auto">
                     <v-layout justify-center row wrap>
                 	    <v-flex primary lighten-2 py-3 text-xs-center white--text xs12>
@@ -88,6 +89,7 @@
                 		</v-flex>
                 	</v-layout>
                 </v-footer>
+                -->
             </div>
         </v-app>
     </div>
