@@ -5,7 +5,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<link href="//unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <meta http-equiv="content-language" content="{{ str_replace('_', '-', app()->getLocale()) }}" />
+    <meta name="theme-color" content="#3f51b5">
+
+    <link href="//unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,500,700,900|Material+Icons' rel="stylesheet">
