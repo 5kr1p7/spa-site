@@ -26,8 +26,8 @@
     export default {
         data: () => ({
             valid: true,
-            email: '',
-            password: '',
+            email: 'alex@alexshangin.ru',
+            password: 'qaz123qaz',
             emailRules: [
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid'

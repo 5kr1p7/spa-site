@@ -8,7 +8,7 @@
 	<link href="//unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
 
 	<!-- Fonts -->
-	<link href='//fonts.googleapis.com/css?family=Nunito:200,600|Roboto:100,300,400,500,700,900|Material+Icons' rel="stylesheet">
+	<link href='//fonts.googleapis.com/css?family=Roboto:400,500,700,900|Material+Icons' rel="stylesheet">
 
         <title>Laravel</title>
 
@@ -71,20 +71,7 @@
     	<v-app>
             <div class="flex-center position-ref full-height">
                 @if (Route::has('login'))
-            	   <v-toolbar color="indigo" dark fixed app>
-            	       <v-toolbar-title>Laravel</v-toolbar-title>
-            	       <v-spacer></v-spacer>
-
-            	       <v-toolbar-items class="hidden-sm-and-down">
-            		      @auth
-            		          <v-btn flat href="/"><v-icon left>home</v-icon> Home</v-btn>
-                              <v-btn flat href="/logout"><v-icon left>lock_open</v-icon> Logout</v-btn>
-            		      @else
-            		          <v-btn flat :to="{ name: 'login' }"><v-icon left>lock_open</v-icon> Login</v-btn>
-                              <v-btn flat href="{{ route('register') }}"><v-icon left>assignment_ind</v-icon> Register</v-btn>
-            		      @endauth
-            	       </v-toolbar-items>
-                    </v-toolbar>
+					<toolbar-component :user="{{ json_encode($auth_user) }}"></toolbar-component>
                 @endif
 
         	    <v-content>

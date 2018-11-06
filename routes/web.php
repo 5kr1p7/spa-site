@@ -14,6 +14,7 @@
 //Auth::routes();
 Route::post('login', 'Auth\LoginController@login')->name('login');
 Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+Route::get('/api/user', 'SpaController@curr_user')->name('curr_user');
 Route::post('register', 'Auth\RegisterController@register');
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');

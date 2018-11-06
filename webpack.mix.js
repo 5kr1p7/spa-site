@@ -11,7 +11,7 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.browserSync('alexshangin.ru');
+mix.browserSync('my.site');
 
 mix.js('resources/js/app.js', 'public/js')
     .version();
