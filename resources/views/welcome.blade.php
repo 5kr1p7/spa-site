@@ -74,7 +74,7 @@
     	<v-app>
             <div class="flex-center position-ref full-height">
                 @if (Route::has('login'))
-					<toolbar-component :user="{{ json_encode($auth_user) }}"></toolbar-component>
+					<toolbar-component :user="{{ json_encode($auth_user) }}" ref="toolbar"></toolbar-component>
                 @endif
 
         	    <v-content>

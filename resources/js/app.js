@@ -37,6 +37,9 @@ import LoginView from './views/LoginView'
 
 const routes = [
     { path: '/login', name: 'login', component: LoginView },
+    { path: '/', name: 'main', component: LoginView },
+
+    { path: '*', redirect: '/' },
 ];
 
 const router = new VueRouter({

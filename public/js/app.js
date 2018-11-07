@@ -1694,9 +1694,41 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['user']
+    data: function data() {
+        return {
+            isLogged: false,
+            testVar: true
+            //isLogged: this.checkIfIsLogged()
+        };
+    },
+    mounted: function mounted() {
+        this.$root.$on('login-change', function (status) {
+            console.log('-- Before status was ' + this.isLogged);
+            console.log('-- I got status ' + status);
+            this.isLogged = status;
+            console.log('-- Now status is ' + this.isLogged);
+            status ? console.log('Logged in') : console.log('Logged out');
+        });
+    },
+
+
+    methods: {
+        toggle: function toggle() {
+            this.isLogged = !this.isLogged;
+            console.log(this.isLogged);
+        },
+        signout: function signout() {
+            this.$root.$emit('login-change', false);
+            this.$router.push('/');
+        },
+        logout: function logout() {
+            axios.get('/logout');
+            this.signout();
+        }
+    }
 });
 
 /***/ }),
@@ -1730,6 +1762,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -1737,8 +1771,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             valid: true,
-            email: 'alex@alexshangin.ru',
-            password: 'qaz123qaz',
+            form: {
+                email: 'alex@alexshangin.ru',
+                password: 'qaz123qaz'
+            },
             emailRules: [function (v) {
                 return !!v || 'E-mail is required';
             }, function (v) {
@@ -1753,11 +1789,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     methods: {
         submit: function submit() {
+            var _this = this;
+
             if (this.$refs.form.validate()) {
                 // Native form submission is not yet supported
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/login', {
-                    email: this.email,
-                    password: this.password
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/login', this.form).then(function (response) {
+                    console.log('Response: ', response);
+                    /*
+                    let responseData = response.data.data
+                    this.$localStorage.set('access_token', responseData.token)
+                    */
+                    _this.$root.$emit('login-change', true);
+                    _this.$router.push('/');
+                }).catch(function (error) {
+                    if (error.response) {
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                        console.log(error.response.headers);
+                    }
                 });
             }
         },
@@ -28843,11 +28892,11 @@ var render = function() {
                           rules: _vm.emailRules
                         },
                         model: {
-                          value: _vm.email,
+                          value: _vm.form.email,
                           callback: function($$v) {
-                            _vm.email = $$v
+                            _vm.$set(_vm.form, "email", $$v)
                           },
-                          expression: "email"
+                          expression: "form.email"
                         }
                       }),
                       _vm._v(" "),
@@ -28860,11 +28909,11 @@ var render = function() {
                           rules: _vm.requiredRules
                         },
                         model: {
-                          value: _vm.password,
+                          value: _vm.form.password,
                           callback: function($$v) {
-                            _vm.password = $$v
+                            _vm.$set(_vm.form, "password", $$v)
                           },
-                          expression: "password"
+                          expression: "form.password"
                         }
                       })
                     ],
@@ -28875,17 +28924,31 @@ var render = function() {
               ),
               _vm._v(" "),
               _c(
-                "v-card-actions",
+                "v-layout",
+                { attrs: { "justify-center": "" } },
                 [
-                  _c("v-spacer"),
-                  _vm._v(" "),
                   _c(
-                    "v-btn",
-                    {
-                      attrs: { disabled: !_vm.valid, color: "primary" },
-                      on: { click: _vm.submit }
-                    },
-                    [_vm._v("Login")]
+                    "v-card-actions",
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { disabled: !_vm.valid, color: "primary" },
+                          on: { click: _vm.submit }
+                        },
+                        [_vm._v("Login")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "primary" },
+                          on: { click: _vm.clear }
+                        },
+                        [_vm._v("Clear")]
+                      )
+                    ],
+                    1
                   )
                 ],
                 1
@@ -28931,7 +28994,21 @@ var render = function() {
         "v-toolbar-items",
         { staticClass: "hidden-xs-only" },
         [
-          _vm.user
+          _c(
+            "v-btn",
+            {
+              attrs: { flat: "" },
+              on: {
+                click: function($event) {
+                  $event.preventDefault()
+                  return _vm.toggle($event)
+                }
+              }
+            },
+            [_vm._v("Test")]
+          ),
+          _vm._v(" "),
+          _vm.isLogged
             ? _c(
                 "v-btn",
                 { attrs: { flat: "", href: "/" } },
@@ -28943,7 +29020,7 @@ var render = function() {
               )
             : _vm._e(),
           _vm._v(" "),
-          !_vm.user
+          !_vm.isLogged
             ? _c(
                 "v-btn",
                 { attrs: { flat: "", to: { name: "login" } } },
@@ -28955,7 +29032,7 @@ var render = function() {
               )
             : _vm._e(),
           _vm._v(" "),
-          !_vm.user
+          !_vm.isLogged
             ? _c(
                 "v-btn",
                 { attrs: { flat: "", href: "/register" } },
@@ -28969,7 +29046,7 @@ var render = function() {
               )
             : _vm._e(),
           _vm._v(" "),
-          _vm.user
+          _vm.isLogged
             ? _c(
                 "v-menu",
                 { attrs: { "offset-y": "" } },
@@ -29004,7 +29081,14 @@ var render = function() {
                     [
                       _c(
                         "v-list-tile",
-                        { attrs: { href: "/logout" } },
+                        {
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              _vm.logout()
+                            }
+                          }
+                        },
                         [
                           _c(
                             "v-list-tile-title",
@@ -65562,7 +65646,7 @@ files.keys().map(function (key) {
 
 
 
-var routes = [{ path: '/login', name: 'login', component: __WEBPACK_IMPORTED_MODULE_4__views_LoginView___default.a }];
+var routes = [{ path: '/login', name: 'login', component: __WEBPACK_IMPORTED_MODULE_4__views_LoginView___default.a }, { path: '/', name: 'main', component: __WEBPACK_IMPORTED_MODULE_4__views_LoginView___default.a }, { path: '*', redirect: '/' }];
 
 var router = new __WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]({
   mode: 'history',

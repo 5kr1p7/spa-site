@@ -7,14 +7,16 @@
                 </v-toolbar>
                 <v-card-text>
                     <v-form ref="form" v-model="valid" lazy-validation>
-                        <v-text-field prepend-icon="person" name="email" v-model="email" label="E-Mail" :rules="emailRules"></v-text-field>
-                        <v-text-field prepend-icon="lock" name="password" v-model="password" label="Password" type="password" :rules="requiredRules"></v-text-field>
+                        <v-text-field prepend-icon="person" name="email" v-model="form.email" label="E-Mail" :rules="emailRules"></v-text-field>
+                        <v-text-field prepend-icon="lock" name="password" v-model="form.password" label="Password" type="password" :rules="requiredRules"></v-text-field>
                     </v-form>
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn :disabled="!valid" @click="submit" color="primary">Login</v-btn>
-                </v-card-actions>
+                <v-layout justify-center>
+                    <v-card-actions>
+                            <v-btn :disabled="!valid" @click="submit" color="primary">Login</v-btn>
+                            <v-btn @click="clear" color="primary">Clear</v-btn>
+                    </v-card-actions>
+                </v-layout>
             </v-card>
         </v-flex>
     </v-layout>
@@ -26,8 +28,10 @@
     export default {
         data: () => ({
             valid: true,
-            email: 'alex@alexshangin.ru',
-            password: 'qaz123qaz',
+            form: {
+                email: 'alex@alexshangin.ru',
+                password: 'qaz123qaz',
+            },
             emailRules: [
                 v => !!v || 'E-mail is required',
                 v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
@@ -41,10 +45,24 @@
             submit () {
                 if (this.$refs.form.validate()) {
                     // Native form submission is not yet supported
-                    axios.post('/login', {
-                        email: this.email,
-                        password: this.password
-                    })
+                    axios.post('/login', this.form)
+                        .then(response => {
+                            console.log('Response: ', response)
+                            /*
+                            let responseData = response.data.data
+                            this.$localStorage.set('access_token', responseData.token)
+                            */
+                            this.$root.$emit('login-change', true);
+                            this.$router.push('/')
+
+                        })
+                        .catch(error => {
+                            if (error.response) {
+                                console.log(error.response.data)
+                                console.log(error.response.status)
+                                console.log(error.response.headers)
+                            }
+                        })
                 }
             },
             clear () {
