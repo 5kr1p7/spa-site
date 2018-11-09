@@ -13,7 +13,7 @@
                 </v-card-text>
                 <v-layout justify-center>
                     <v-card-actions>
-                            <v-btn :disabled="!valid" @click="submit" color="primary">Login</v-btn>
+                            <v-btn :disabled="!valid" @click.prevent="submit" color="primary">Login</v-btn>
                             <v-btn @click="clear" color="primary">Clear</v-btn>
                     </v-card-actions>
                 </v-layout>
@@ -42,17 +42,20 @@
         }),
 
         methods: {
-            submit () {
+            submit (event) {
                 if (this.$refs.form.validate()) {
                     // Native form submission is not yet supported
+                    axios.get('/api/getcsrf').then(({ data }) => {
+                        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = data
+                    }).then(
                     axios.post('/login', this.form)
                         .then(response => {
-                            console.log('Response: ', response)
+                            //console.log('Response: ', response)
                             /*
                             let responseData = response.data.data
                             this.$localStorage.set('access_token', responseData.token)
                             */
-                            this.$root.$emit('login-change', true);
+                            this.$root.$emit('loginChange', true);
                             this.$router.push('/')
 
                         })
@@ -63,6 +66,7 @@
                                 console.log(error.response.headers)
                             }
                         })
+                    )
                 }
             },
             clear () {

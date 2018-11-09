@@ -1694,23 +1694,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
             isLogged: false,
-            testVar: true
-            //isLogged: this.checkIfIsLogged()
+            username: ''
         };
     },
     mounted: function mounted() {
-        this.$root.$on('login-change', function (status) {
-            console.log('-- Before status was ' + this.isLogged);
-            console.log('-- I got status ' + status);
-            this.isLogged = status;
-            console.log('-- Now status is ' + this.isLogged);
-            status ? console.log('Logged in') : console.log('Logged out');
+        this.$nextTick(function () {
+            this.$root.$on('loginChange', function (status) {
+                this.$refs.toolbar.isLogged = status;
+            });
+            this.getUsername();
         });
     },
 
@@ -1721,12 +1718,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             console.log(this.isLogged);
         },
         signout: function signout() {
-            this.$root.$emit('login-change', false);
+            this.$root.$emit('loginChange', false);
             this.$router.push('/');
         },
         logout: function logout() {
             axios.get('/logout');
             this.signout();
+        },
+        getUsername: function getUsername() {
+            var _this = this;
+
+            axios.get('/api/user').then(function (_ref) {
+                var data = _ref.data;
+
+                _this.username = data[0].name;
+                _this.isLogged = true;
+            }).catch(function (error) {
+                _this.username = '';
+                _this.isLogged = false;
+            });
         }
     }
 });
@@ -1788,18 +1798,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
 
     methods: {
-        submit: function submit() {
+        submit: function submit(event) {
             var _this = this;
 
             if (this.$refs.form.validate()) {
                 // Native form submission is not yet supported
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/login', this.form).then(function (response) {
-                    console.log('Response: ', response);
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/getcsrf').then(function (_ref) {
+                    var data = _ref.data;
+
+                    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = data;
+                }).then(__WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/login', this.form).then(function (response) {
+                    //console.log('Response: ', response)
                     /*
                     let responseData = response.data.data
                     this.$localStorage.set('access_token', responseData.token)
                     */
-                    _this.$root.$emit('login-change', true);
+                    _this.$root.$emit('loginChange', true);
                     _this.$router.push('/');
                 }).catch(function (error) {
                     if (error.response) {
@@ -1807,7 +1821,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         console.log(error.response.status);
                         console.log(error.response.headers);
                     }
-                });
+                }));
             }
         },
         clear: function clear() {
@@ -28934,7 +28948,12 @@ var render = function() {
                         "v-btn",
                         {
                           attrs: { disabled: !_vm.valid, color: "primary" },
-                          on: { click: _vm.submit }
+                          on: {
+                            click: function($event) {
+                              $event.preventDefault()
+                              return _vm.submit($event)
+                            }
+                          }
                         },
                         [_vm._v("Login")]
                       ),
@@ -28994,20 +29013,6 @@ var render = function() {
         "v-toolbar-items",
         { staticClass: "hidden-xs-only" },
         [
-          _c(
-            "v-btn",
-            {
-              attrs: { flat: "" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.toggle($event)
-                }
-              }
-            },
-            [_vm._v("Test")]
-          ),
-          _vm._v(" "),
           _vm.isLogged
             ? _c(
                 "v-btn",
@@ -29064,7 +29069,7 @@ var render = function() {
                           _c("v-icon", { attrs: { left: "" } }, [
                             _vm._v("person")
                           ]),
-                          _vm._v(_vm._s(_vm.user.name))
+                          _vm._v(_vm._s(_vm.username))
                         ],
                         1
                       ),
@@ -48935,7 +48940,6 @@ var __assign = undefined && undefined.__assign || function () {
             type: String,
             default: ''
         },
-        disabled: Boolean,
         height: [Number, String],
         hideDetails: Boolean,
         hint: String,
@@ -48944,14 +48948,12 @@ var __assign = undefined && undefined.__assign || function () {
         prependIcon: String,
         /** @deprecated */
         prependIconCb: Function,
-        readonly: Boolean,
         value: { required: false }
     },
     data: function data(vm) {
         return {
             lazyValue: vm.value,
-            hasMouseDown: false,
-            isFocused: false
+            hasMouseDown: false
         };
     },
     computed: {
@@ -53395,7 +53397,7 @@ var defaultMenuProps = {
         onKeyDown: function onKeyDown(e) {
             var keyCode = e.keyCode;
             // If enter, space, up, or down is pressed, open menu
-            if (!this.isMenuActive && [_util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].enter, _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].space, _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].up, _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].down].includes(keyCode)) this.activateMenu();
+            if (!this.readonly && !this.isMenuActive && [_util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].enter, _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].space, _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].up, _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].down].includes(keyCode)) this.activateMenu();
             if (this.isMenuActive && this.$refs.menu) this.$refs.menu.changeListIndex(e);
             // This should do something different
             if (keyCode === _util_helpers__WEBPACK_IMPORTED_MODULE_9__["keyCodes"].enter) return this.onEnterDown(e);
@@ -56213,7 +56215,8 @@ var dirtyTypes = ['color', 'file', 'time', 'date', 'datetime-local', 'week', 'mo
                 'v-text-field--box': this.box,
                 'v-text-field--enclosed': this.isEnclosed,
                 'v-text-field--reverse': this.reverse,
-                'v-text-field--outline': this.hasOutline
+                'v-text-field--outline': this.hasOutline,
+                'v-text-field--placeholder': this.placeholder
             };
         },
         counterValue: function counterValue() {
@@ -56256,7 +56259,7 @@ var dirtyTypes = ['color', 'file', 'time', 'date', 'datetime-local', 'week', 'mo
             return this.solo || this.soloInverted;
         },
         labelPosition: function labelPosition() {
-            var offset = this.prefix && !this.labelValue ? 16 : 0;
+            var offset = this.prefix && !this.labelValue ? this.prefixWidth : 0;
             return !this.$vuetify.rtl !== !this.reverse ? {
                 left: 'auto',
                 right: offset
@@ -56266,10 +56269,17 @@ var dirtyTypes = ['color', 'file', 'time', 'date', 'datetime-local', 'week', 'mo
             };
         },
         showLabel: function showLabel() {
-            return this.hasLabel && (!this.isSingle || !this.isLabelActive && !this.placeholder);
+            return this.hasLabel && (!this.isSingle || !this.isLabelActive && !this.placeholder && !this.prefixLabel);
         },
         labelValue: function labelValue() {
-            return !this.isSingle && Boolean(this.isFocused || this.isLabelActive || this.placeholder);
+            return !this.isSingle && Boolean(this.isFocused || this.isLabelActive || this.placeholder || this.prefixLabel);
+        },
+        prefixWidth: function prefixWidth() {
+            if (!this.prefix && !this.$refs.prefix) return;
+            return this.$refs.prefix.offsetWidth;
+        },
+        prefixLabel: function prefixLabel() {
+            return this.prefix && !this.value;
         }
     },
     watch: {
@@ -58964,7 +58974,7 @@ var Vuetify = {
             return false;
         })(opts.components);
     },
-    version: '1.3.5'
+    version: '1.3.7'
 };
 function checkVueVersion(Vue, requiredVue) {
     var vueDep = requiredVue || '^2.5.10';
@@ -60627,7 +60637,7 @@ var Vuetify = {
         Vue.use(_components_Vuetify__WEBPACK_IMPORTED_MODULE_1__["default"], __assign({ components: _components__WEBPACK_IMPORTED_MODULE_2__,
             directives: _directives__WEBPACK_IMPORTED_MODULE_3__["default"] }, args));
     },
-    version: '1.3.5'
+    version: '1.3.7'
 };
 if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.use(Vuetify);
@@ -61194,6 +61204,11 @@ var __spread = undefined && undefined.__spread || function () {
         }
     },
     watch: {
+        items: function items() {
+            if (this.pageStart >= this.itemsLength) {
+                this.resetPagination();
+            }
+        },
         search: function search() {
             var _this = this;
             this.$nextTick(function () {
@@ -63009,10 +63024,10 @@ __webpack_require__.r(__webpack_exports__);
                     disabled: this.isDisabled,
                     id: this.id,
                     role: type,
-                    type: type,
-                    value: this.inputValue
+                    type: type
                 }, attrs),
                 domProps: {
+                    value: this.value,
                     checked: this.isActive
                 },
                 on: {
@@ -63495,6 +63510,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     name: 'validatable',
     mixins: [_colorable__WEBPACK_IMPORTED_MODULE_3__["default"], Object(_registrable__WEBPACK_IMPORTED_MODULE_1__["inject"])('form')],
     props: {
+        disabled: Boolean,
         error: Boolean,
         errorCount: {
             type: [Number, String],
@@ -63512,6 +63528,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 return [];
             }
         },
+        readonly: Boolean,
         rules: {
             type: Array,
             default: function _default() {
@@ -63533,6 +63550,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             hasColor: false,
             hasFocused: false,
             hasInput: false,
+            isFocused: false,
             isResetting: false,
             valid: false
         };
@@ -63601,7 +63619,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.validateOnBlur || this.$nextTick(this.validate);
         },
         isFocused: function isFocused(val) {
-            if (!val) {
+            // Should not check validation
+            // if disabled or readonly
+            if (!val && !this.disabled && !this.readonly) {
                 this.hasFocused = true;
                 this.validateOnBlur && this.validate();
             }

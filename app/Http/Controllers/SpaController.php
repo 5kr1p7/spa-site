@@ -15,4 +15,8 @@ class SpaController extends Controller
         return Auth::user()->get(['id', 'name']);
     }
 
+    public function gen_csrf() {
+        return response(csrf_token());
+    }
+
 }
