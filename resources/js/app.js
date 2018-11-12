@@ -11,9 +11,11 @@ import 'babel-polyfill'
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueRouter from 'vue-router';
+//import VueResource  from 'vue-resource';
 
 Vue.use(VueRouter)
 Vue.use(Vuetify)
+//Vue.use(VueResource)
 
 window.Vue = require('vue');
 
@@ -57,3 +59,10 @@ const app = new Vue({
     el: '#app',
     router
 });
+
+/*
+Vue.http.interceptors.push(function (request, next) {
+    request.headers['X-CSRF-TOKEN'] = Laravel.csrfToken;
+    next();
+});
+*/

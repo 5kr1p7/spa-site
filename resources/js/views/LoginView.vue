@@ -42,33 +42,22 @@
         }),
 
         methods: {
+
             submit (event) {
                 if (this.$refs.form.validate()) {
-                    // Native form submission is not yet supported
-                    axios.get('/api/getcsrf').then(({ data }) => {
-                        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = data
-                    }).then(
-                    axios.post('/login', this.form)
-                        .then(response => {
-                            //console.log('Response: ', response)
-                            /*
-                            let responseData = response.data.data
-                            this.$localStorage.set('access_token', responseData.token)
-                            */
-                            this.$root.$emit('loginChange', true);
-                            this.$router.push('/')
-
-                        })
-                        .catch(error => {
-                            if (error.response) {
-                                console.log(error.response.data)
-                                console.log(error.response.status)
-                                console.log(error.response.headers)
-                            }
-                        })
+                    axios.get('/api/getcsrf').then((data) => {
+                        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = data.data
+                    }).then((resp) => {
+                        axios.post('/login', this.form)
+                            .then(response => {
+                                this.$root.$emit('loginChange', true);
+                                this.$router.push('/')
+                            })
+                        }
                     )
                 }
             },
+
             clear () {
                 this.$refs.form.reset()
             }

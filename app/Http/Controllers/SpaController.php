@@ -12,7 +12,11 @@ class SpaController extends Controller
     }
 
     public function curr_user() {
-        return Auth::user()->get(['id', 'name']);
+        if (Auth::check()) {
+            return Auth::user()->get(['id', 'name']);
+        } else {
+            return response()->json([]);
+        }
     }
 
     public function gen_csrf() {

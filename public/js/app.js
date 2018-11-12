@@ -1663,6 +1663,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?{\"cacheDirectory\":true,\"presets\":[[\"env\",{\"modules\":false,\"targets\":{\"browsers\":[\"> 2%\"],\"uglify\":true}}]],\"plugins\":[\"transform-object-rest-spread\",[\"transform-runtime\",{\"polyfill\":false,\"helpers\":false}]]}!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./resources/js/components/NavDrawer.vue":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            drawer: null,
+            items: [{ title: 'Home', icon: 'dashboard' }, { title: 'About', icon: 'question_answer' }]
+        };
+    }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?{\"cacheDirectory\":true,\"presets\":[[\"env\",{\"modules\":false,\"targets\":{\"browsers\":[\"> 2%\"],\"uglify\":true}}]],\"plugins\":[\"transform-object-rest-spread\",[\"transform-runtime\",{\"polyfill\":false,\"helpers\":false}]]}!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./resources/js/components/ToolbarComponent.vue":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1694,48 +1715,87 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
             isLogged: false,
-            username: ''
+            username: '',
+
+            drawer: null,
+            items: [{ title: 'Home', icon: 'home', route: '/', iflogged: true }, { title: 'Login', icon: 'lock_open', route: '/login', iflogged: false }, { title: 'Register', icon: 'assignment_ind', route: '/', iflogged: false }]
         };
+    },
+    created: function created() {
+        this.getUsername();
     },
     mounted: function mounted() {
         this.$nextTick(function () {
             this.$root.$on('loginChange', function (status) {
                 this.$refs.toolbar.isLogged = status;
+                this.$refs.toolbar.getUsername();
             });
-            this.getUsername();
         });
     },
 
 
     methods: {
-        toggle: function toggle() {
-            this.isLogged = !this.isLogged;
-            console.log(this.isLogged);
-        },
         signout: function signout() {
             this.$root.$emit('loginChange', false);
             this.$router.push('/');
         },
         logout: function logout() {
-            axios.get('/logout');
-            this.signout();
+            var _this = this;
+
+            axios.get('/logout').then(function (response) {
+                _this.signout();
+            });
         },
         getUsername: function getUsername() {
-            var _this = this;
+            var _this2 = this;
 
             axios.get('/api/user').then(function (_ref) {
                 var data = _ref.data;
 
-                _this.username = data[0].name;
-                _this.isLogged = true;
-            }).catch(function (error) {
-                _this.username = '';
-                _this.isLogged = false;
+                if (data[0]) {
+                    _this2.username = data[0].name;
+                    _this2.isLogged = true;
+                } else {
+                    _this2.isLogged = false;
+                }
             });
         }
     }
@@ -1802,26 +1862,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             if (this.$refs.form.validate()) {
-                // Native form submission is not yet supported
-                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/getcsrf').then(function (_ref) {
-                    var data = _ref.data;
-
-                    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = data;
-                }).then(__WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/login', this.form).then(function (response) {
-                    //console.log('Response: ', response)
-                    /*
-                    let responseData = response.data.data
-                    this.$localStorage.set('access_token', responseData.token)
-                    */
-                    _this.$root.$emit('loginChange', true);
-                    _this.$router.push('/');
-                }).catch(function (error) {
-                    if (error.response) {
-                        console.log(error.response.data);
-                        console.log(error.response.status);
-                        console.log(error.response.headers);
-                    }
-                }));
+                __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get('/api/getcsrf').then(function (data) {
+                    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = data.data;
+                }).then(function (resp) {
+                    __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/login', _this.form).then(function (response) {
+                        _this.$root.$emit('loginChange', true);
+                        _this.$router.push('/');
+                    });
+                });
             }
         },
         clear: function clear() {
@@ -29002,106 +29050,108 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "v-toolbar",
-    { attrs: { color: "indigo", dark: "", fixed: "", app: "" } },
+    "div",
     [
-      _c("v-toolbar-title", [_vm._v("Laravel")]),
-      _vm._v(" "),
-      _c("v-spacer"),
-      _vm._v(" "),
       _c(
-        "v-toolbar-items",
-        { staticClass: "hidden-xs-only" },
+        "v-toolbar",
+        { attrs: { color: "indigo", dark: "", fixed: "", app: "" } },
         [
-          _vm.isLogged
-            ? _c(
-                "v-btn",
-                { attrs: { flat: "", href: "/" } },
-                [
-                  _c("v-icon", { attrs: { left: "" } }, [_vm._v("home")]),
-                  _vm._v("Home")
-                ],
-                1
-              )
-            : _vm._e(),
+          _c("v-toolbar-side-icon", {
+            on: {
+              click: function($event) {
+                $event.stopPropagation()
+                _vm.drawer = !_vm.drawer
+              }
+            }
+          }),
           _vm._v(" "),
-          !_vm.isLogged
-            ? _c(
-                "v-btn",
-                { attrs: { flat: "", to: { name: "login" } } },
-                [
-                  _c("v-icon", { attrs: { left: "" } }, [_vm._v("lock_open")]),
-                  _vm._v("Login")
-                ],
-                1
-              )
-            : _vm._e(),
+          _c("v-toolbar-title", [_vm._v("Laravel")]),
           _vm._v(" "),
-          !_vm.isLogged
-            ? _c(
-                "v-btn",
-                { attrs: { flat: "", href: "/register" } },
-                [
-                  _c("v-icon", { attrs: { left: "" } }, [
-                    _vm._v("assignment_ind")
-                  ]),
-                  _vm._v("Register")
-                ],
-                1
-              )
-            : _vm._e(),
+          _c("v-spacer"),
           _vm._v(" "),
-          _vm.isLogged
-            ? _c(
-                "v-menu",
-                { attrs: { "offset-y": "" } },
-                [
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { slot: "activator", flat: "" },
-                      slot: "activator"
-                    },
+          _c(
+            "v-toolbar-items",
+            { staticClass: "hidden-xs-only" },
+            [
+              _vm._l(_vm.items, function(item) {
+                return _c(
+                  "v-btn",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.isLogged == item.iflogged,
+                        expression: "isLogged == item.iflogged"
+                      }
+                    ],
+                    key: item.title,
+                    attrs: { to: item.route, flat: "" }
+                  },
+                  [
+                    _c("v-icon", { attrs: { left: "" } }, [
+                      _vm._v(_vm._s(item.icon))
+                    ]),
+                    _vm._v(_vm._s(item.title))
+                  ],
+                  1
+                )
+              }),
+              _vm._v(" "),
+              _vm.isLogged
+                ? _c(
+                    "v-menu",
+                    { attrs: { "offset-y": "" } },
                     [
                       _c(
-                        "span",
+                        "v-btn",
+                        {
+                          attrs: { slot: "activator", flat: "" },
+                          slot: "activator"
+                        },
                         [
-                          _c("v-icon", { attrs: { left: "" } }, [
-                            _vm._v("person")
-                          ]),
-                          _vm._v(_vm._s(_vm.username))
+                          _c(
+                            "span",
+                            [
+                              _c("v-icon", { attrs: { left: "" } }, [
+                                _vm._v("person")
+                              ]),
+                              _vm._v(_vm._s(_vm.username))
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-icon", { attrs: { dark: "" } }, [
+                            _vm._v("arrow_drop_down")
+                          ])
                         ],
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-icon", { attrs: { dark: "" } }, [
-                        _vm._v("arrow_drop_down")
-                      ])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-list",
-                    [
                       _c(
-                        "v-list-tile",
-                        {
-                          on: {
-                            click: function($event) {
-                              $event.preventDefault()
-                              _vm.logout()
-                            }
-                          }
-                        },
+                        "v-list",
                         [
                           _c(
-                            "v-list-tile-title",
+                            "v-list-tile",
+                            {
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.logout()
+                                }
+                              }
+                            },
                             [
-                              _c("v-icon", { attrs: { left: "" } }, [
-                                _vm._v("exit_to_app")
-                              ]),
-                              _vm._v("Logout")
+                              _c(
+                                "v-list-tile-title",
+                                [
+                                  _c("v-icon", { attrs: { left: "" } }, [
+                                    _vm._v("exit_to_app")
+                                  ]),
+                                  _vm._v("Logout")
+                                ],
+                                1
+                              )
                             ],
                             1
                           )
@@ -29111,10 +29161,105 @@ var render = function() {
                     ],
                     1
                   )
+                : _vm._e()
+            ],
+            2
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-navigation-drawer",
+        {
+          attrs: { absolute: "", temporary: "" },
+          model: {
+            value: _vm.drawer,
+            callback: function($$v) {
+              _vm.drawer = $$v
+            },
+            expression: "drawer"
+          }
+        },
+        [
+          _c(
+            "v-list",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value: _vm.isLogged,
+                  expression: "isLogged"
+                }
+              ],
+              staticClass: "pa-1"
+            },
+            [
+              _c(
+                "v-list-tile",
+                { attrs: { avatar: "" } },
+                [
+                  _c("v-list-tile-avatar", [
+                    _c("img", {
+                      attrs: {
+                        src: "https://randomuser.me/api/portraits/men/85.jpg"
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-list-tile-content",
+                    [_c("v-list-tile-title", [_vm._v(_vm._s(_vm.username))])],
+                    1
+                  )
                 ],
                 1
               )
-            : _vm._e()
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-list",
+            { staticClass: "pt-0", attrs: { dense: "" } },
+            [
+              _c("v-divider"),
+              _vm._v(" "),
+              _vm._l(_vm.items, function(item) {
+                return _c(
+                  "v-list-tile",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value: _vm.isLogged == item.iflogged,
+                        expression: "isLogged == item.iflogged"
+                      }
+                    ],
+                    key: item.title,
+                    attrs: { to: item.route }
+                  },
+                  [
+                    _c(
+                      "v-list-tile-action",
+                      [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-list-tile-content",
+                      [_c("v-list-tile-title", [_vm._v(_vm._s(item.title))])],
+                      1
+                    )
+                  ],
+                  1
+                )
+              })
+            ],
+            2
+          )
         ],
         1
       )
@@ -29129,6 +29274,27 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-36484d2d", module.exports)
+  }
+}
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-74470fce\",\"hasScoped\":false,\"buble\":{\"transforms\":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/js/components/NavDrawer.vue":
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div")
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-74470fce", module.exports)
   }
 }
 
@@ -65594,6 +65760,7 @@ module.exports = function(module) {
 
 var map = {
 	"./components/ExampleComponent.vue": "./resources/js/components/ExampleComponent.vue",
+	"./components/NavDrawer.vue": "./resources/js/components/NavDrawer.vue",
 	"./components/ToolbarComponent.vue": "./resources/js/components/ToolbarComponent.vue",
 	"./views/LoginView.vue": "./resources/js/views/LoginView.vue"
 };
@@ -65642,9 +65809,11 @@ __webpack_require__("./resources/js/bootstrap.js");
 
 
 
+//import VueResource  from 'vue-resource';
 
 __WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]);
 __WEBPACK_IMPORTED_MODULE_1_vue___default.a.use(__WEBPACK_IMPORTED_MODULE_2_vuetify___default.a);
+//Vue.use(VueResource)
 
 window.Vue = __webpack_require__("./node_modules/vue/dist/vue.common.js");
 
@@ -65661,7 +65830,7 @@ __WEBPACK_IMPORTED_MODULE_1_vue___default.a.component('example-component', __web
 var files = __webpack_require__("./resources/js recursive \\.vue$/");
 
 files.keys().map(function (key) {
-  return __WEBPACK_IMPORTED_MODULE_1_vue___default.a.component(_.last(key.split('/')).split('.')[0], files(key));
+    return __WEBPACK_IMPORTED_MODULE_1_vue___default.a.component(_.last(key.split('/')).split('.')[0], files(key));
 });
 
 
@@ -65669,8 +65838,8 @@ files.keys().map(function (key) {
 var routes = [{ path: '/login', name: 'login', component: __WEBPACK_IMPORTED_MODULE_4__views_LoginView___default.a }, { path: '/', name: 'main', component: __WEBPACK_IMPORTED_MODULE_4__views_LoginView___default.a }, { path: '*', redirect: '/' }];
 
 var router = new __WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]({
-  mode: 'history',
-  routes: routes
+    mode: 'history',
+    routes: routes
 });
 
 /**
@@ -65680,9 +65849,16 @@ var router = new __WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]({
  */
 
 var app = new __WEBPACK_IMPORTED_MODULE_1_vue___default.a({
-  el: '#app',
-  router: router
+    el: '#app',
+    router: router
 });
+
+/*
+Vue.http.interceptors.push(function (request, next) {
+    request.headers['X-CSRF-TOKEN'] = Laravel.csrfToken;
+    next();
+});
+*/
 
 /***/ }),
 
@@ -65787,6 +65963,54 @@ if (false) {(function () {
     hotAPI.createRecord("data-v-299e239e", Component.options)
   } else {
     hotAPI.reload("data-v-299e239e", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ "./resources/js/components/NavDrawer.vue":
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__("./node_modules/vue-loader/lib/component-normalizer.js")
+/* script */
+var __vue_script__ = __webpack_require__("./node_modules/babel-loader/lib/index.js?{\"cacheDirectory\":true,\"presets\":[[\"env\",{\"modules\":false,\"targets\":{\"browsers\":[\"> 2%\"],\"uglify\":true}}]],\"plugins\":[\"transform-object-rest-spread\",[\"transform-runtime\",{\"polyfill\":false,\"helpers\":false}]]}!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./resources/js/components/NavDrawer.vue")
+/* template */
+var __vue_template__ = __webpack_require__("./node_modules/vue-loader/lib/template-compiler/index.js?{\"id\":\"data-v-74470fce\",\"hasScoped\":false,\"buble\":{\"transforms\":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./resources/js/components/NavDrawer.vue")
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/NavDrawer.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-74470fce", Component.options)
+  } else {
+    hotAPI.reload("data-v-74470fce", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
