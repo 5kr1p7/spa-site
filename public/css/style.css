@@ -1,0 +1,13 @@
+.v-alert {
+    position: fixed;
+    top: 80px;
+    width: 100%;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 1.0s;
+}
+
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+    opacity: 0;
+}

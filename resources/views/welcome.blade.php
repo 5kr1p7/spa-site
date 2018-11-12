@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
 	<meta charset="utf-8">
+    <meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
@@ -9,6 +10,7 @@
     <meta name="theme-color" content="#3f51b5">
 
     <link href="//unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,500,700,900|Material+Icons' rel="stylesheet">
@@ -72,13 +74,19 @@
     <body>
     <div id="app">
     	<v-app>
-            <div class="flex-center position-ref full-height">
+            <div>
                 @if (Route::has('login'))
 					<toolbar-component ref="toolbar"></toolbar-component>
                     <nav-drawer></nav-drawer>
                 @endif
 
-        	    <v-content>
+                    <transition name="fade">
+                        <v-alert v-if="showAlert" :value="showAlert" color="success" icon="new_releases">
+                            This is a success alert with a custom icon.
+                        </v-alert>
+                    </transition>
+
+        	    <v-content class="flex-center position-ref full-height">
                     <v-container fluid>
                 	    <div class="content">
         	        	  <router-view></router-view>

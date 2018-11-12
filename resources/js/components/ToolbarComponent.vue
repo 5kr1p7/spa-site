@@ -1,32 +1,5 @@
 <template>
     <div>
-        <v-toolbar color="indigo" dark fixed app>
-            <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-            <v-toolbar-title>Laravel</v-toolbar-title>
-            <v-spacer></v-spacer>
-
-            <v-toolbar-items class="hidden-xs-only">
-                <v-btn v-for="item in items" :key="item.title" v-show="isLogged == item.iflogged" :to="item.route" flat><v-icon left>{{ item.icon }}</v-icon>{{ item.title }}</v-btn>
-                <!--
-                <v-btn v-show="isLogged" flat href="/"><v-icon left>home</v-icon>Home</v-btn>
-                <v-btn v-show="!isLogged" flat :to="{ name: 'login' }"><v-icon left>lock_open</v-icon>Login</v-btn>
-                <v-btn v-show="!isLogged" flat href="/register"><v-icon left>assignment_ind</v-icon>Register</v-btn>
-                -->
-
-                <v-menu v-if="isLogged" offset-y>
-                    <v-btn flat slot="activator">
-                        <span><v-icon left>person</v-icon>{{ username }}</span>
-                        <v-icon dark>arrow_drop_down</v-icon>
-                    </v-btn>
-
-                    <v-list>
-                        <v-list-tile @click.prevent="logout()">
-                            <v-list-tile-title><v-icon left>exit_to_app</v-icon>Logout</v-list-tile-title>
-                        </v-list-tile>
-                    </v-list>
-                </v-menu>
-            </v-toolbar-items>
-        </v-toolbar>
         <v-navigation-drawer v-model="drawer" absolute temporary>
             <v-list class="pa-1" v-show="isLogged">
                 <v-list-tile avatar>
@@ -54,6 +27,33 @@
                 </v-list-tile>
             </v-list>
         </v-navigation-drawer>
+        <v-toolbar color="indigo" dark fixed app>
+            <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+            <v-toolbar-title>Laravel</v-toolbar-title>
+            <v-spacer></v-spacer>
+
+            <v-toolbar-items class="hidden-xs-only">
+                <v-btn v-for="item in items" :key="item.title" v-show="isLogged == item.iflogged && !item.onlydrawer" :to="item.route" flat><v-icon left>{{ item.icon }}</v-icon>{{ item.title }}</v-btn>
+                <!--
+                <v-btn v-show="isLogged" flat href="/"><v-icon left>home</v-icon>Home</v-btn>
+                <v-btn v-show="!isLogged" flat :to="{ name: 'login' }"><v-icon left>lock_open</v-icon>Login</v-btn>
+                <v-btn v-show="!isLogged" flat href="/register"><v-icon left>assignment_ind</v-icon>Register</v-btn>
+                -->
+
+                <v-menu v-if="isLogged" offset-y>
+                    <v-btn flat slot="activator">
+                        <span><v-icon left>person</v-icon>{{ username }}</span>
+                        <v-icon dark>arrow_drop_down</v-icon>
+                    </v-btn>
+
+                    <v-list>
+                        <v-list-tile @click.prevent="logout()">
+                            <v-list-tile-title><v-icon left>exit_to_app</v-icon>Logout</v-list-tile-title>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+            </v-toolbar-items>
+        </v-toolbar>
     </div>
 </template>
 
@@ -69,6 +69,7 @@
                     { title: 'Home', icon: 'home', route: '/', iflogged: true },
                     { title: 'Login', icon: 'lock_open', route: '/login', iflogged: false },
                     { title: 'Register', icon: 'assignment_ind', route: '/', iflogged: false },
+                    { title: 'Logout', icon: 'exit_to_app', route: '/', iflogged: true, onlydrawer: true, clicked: "logout()" },
                 ]
             }
         },

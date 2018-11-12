@@ -1756,7 +1756,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             username: '',
 
             drawer: null,
-            items: [{ title: 'Home', icon: 'home', route: '/', iflogged: true }, { title: 'Login', icon: 'lock_open', route: '/login', iflogged: false }, { title: 'Register', icon: 'assignment_ind', route: '/', iflogged: false }]
+            items: [{ title: 'Home', icon: 'home', route: '/', iflogged: true }, { title: 'Login', icon: 'lock_open', route: '/login', iflogged: false }, { title: 'Register', icon: 'assignment_ind', route: '/', iflogged: false }, { title: 'Logout', icon: 'exit_to_app', route: '/', iflogged: true, onlydrawer: true, clicked: "logout()" }]
         };
     },
     created: function created() {
@@ -1834,6 +1834,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 
@@ -1841,9 +1842,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             valid: true,
+            show1: false,
             form: {
                 email: 'alex@alexshangin.ru',
-                password: 'qaz123qaz'
+                password: 'qaz123qaz',
+                remember: 0
             },
             emailRules: [function (v) {
                 return !!v || 'E-mail is required';
@@ -1874,6 +1877,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         clear: function clear() {
             this.$refs.form.reset();
+        },
+        getLoggedStatus: function getLoggedStatus() {
+            return this.$refs.toolbar.isLogged;
         }
     }
 });
@@ -28925,7 +28931,18 @@ var render = function() {
               _c(
                 "v-toolbar",
                 { attrs: { dark: "", color: "primary" } },
-                [_c("v-toolbar-title", [_vm._v("Login")])],
+                [
+                  _c(
+                    "v-toolbar-title",
+                    [
+                      _c("v-icon", { attrs: { left: "" } }, [
+                        _vm._v("vpn_key")
+                      ]),
+                      _vm._v(" Login")
+                    ],
+                    1
+                  )
+                ],
                 1
               ),
               _vm._v(" "),
@@ -28968,7 +28985,16 @@ var render = function() {
                           name: "password",
                           label: "Password",
                           type: "password",
-                          rules: _vm.requiredRules
+                          rules: _vm.requiredRules,
+                          type: _vm.show1 ? "text" : "password",
+                          "append-icon": _vm.show1
+                            ? "visibility_off"
+                            : "visibility"
+                        },
+                        on: {
+                          "click:append": function($event) {
+                            _vm.show1 = !_vm.show1
+                          }
                         },
                         model: {
                           value: _vm.form.password,
@@ -28976,6 +29002,21 @@ var render = function() {
                             _vm.$set(_vm.form, "password", $$v)
                           },
                           expression: "form.password"
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("v-checkbox", {
+                        attrs: {
+                          label: "Remember me",
+                          color: "primary",
+                          name: "remember"
+                        },
+                        model: {
+                          value: _vm.form.remember,
+                          callback: function($$v) {
+                            _vm.$set(_vm.form, "remember", $$v)
+                          },
+                          expression: "form.remember"
                         }
                       })
                     ],
@@ -29052,123 +29093,6 @@ var render = function() {
   return _c(
     "div",
     [
-      _c(
-        "v-toolbar",
-        { attrs: { color: "indigo", dark: "", fixed: "", app: "" } },
-        [
-          _c("v-toolbar-side-icon", {
-            on: {
-              click: function($event) {
-                $event.stopPropagation()
-                _vm.drawer = !_vm.drawer
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("v-toolbar-title", [_vm._v("Laravel")]),
-          _vm._v(" "),
-          _c("v-spacer"),
-          _vm._v(" "),
-          _c(
-            "v-toolbar-items",
-            { staticClass: "hidden-xs-only" },
-            [
-              _vm._l(_vm.items, function(item) {
-                return _c(
-                  "v-btn",
-                  {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: _vm.isLogged == item.iflogged,
-                        expression: "isLogged == item.iflogged"
-                      }
-                    ],
-                    key: item.title,
-                    attrs: { to: item.route, flat: "" }
-                  },
-                  [
-                    _c("v-icon", { attrs: { left: "" } }, [
-                      _vm._v(_vm._s(item.icon))
-                    ]),
-                    _vm._v(_vm._s(item.title))
-                  ],
-                  1
-                )
-              }),
-              _vm._v(" "),
-              _vm.isLogged
-                ? _c(
-                    "v-menu",
-                    { attrs: { "offset-y": "" } },
-                    [
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { slot: "activator", flat: "" },
-                          slot: "activator"
-                        },
-                        [
-                          _c(
-                            "span",
-                            [
-                              _c("v-icon", { attrs: { left: "" } }, [
-                                _vm._v("person")
-                              ]),
-                              _vm._v(_vm._s(_vm.username))
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c("v-icon", { attrs: { dark: "" } }, [
-                            _vm._v("arrow_drop_down")
-                          ])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list",
-                        [
-                          _c(
-                            "v-list-tile",
-                            {
-                              on: {
-                                click: function($event) {
-                                  $event.preventDefault()
-                                  _vm.logout()
-                                }
-                              }
-                            },
-                            [
-                              _c(
-                                "v-list-tile-title",
-                                [
-                                  _c("v-icon", { attrs: { left: "" } }, [
-                                    _vm._v("exit_to_app")
-                                  ]),
-                                  _vm._v("Logout")
-                                ],
-                                1
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                : _vm._e()
-            ],
-            2
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
       _c(
         "v-navigation-drawer",
         {
@@ -29257,6 +29181,125 @@ var render = function() {
                   1
                 )
               })
+            ],
+            2
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-toolbar",
+        { attrs: { color: "indigo", dark: "", fixed: "", app: "" } },
+        [
+          _c("v-toolbar-side-icon", {
+            on: {
+              click: function($event) {
+                $event.stopPropagation()
+                _vm.drawer = !_vm.drawer
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("v-toolbar-title", [_vm._v("Laravel")]),
+          _vm._v(" "),
+          _c("v-spacer"),
+          _vm._v(" "),
+          _c(
+            "v-toolbar-items",
+            { staticClass: "hidden-xs-only" },
+            [
+              _vm._l(_vm.items, function(item) {
+                return _c(
+                  "v-btn",
+                  {
+                    directives: [
+                      {
+                        name: "show",
+                        rawName: "v-show",
+                        value:
+                          _vm.isLogged == item.iflogged && !item.onlydrawer,
+                        expression:
+                          "isLogged == item.iflogged && !item.onlydrawer"
+                      }
+                    ],
+                    key: item.title,
+                    attrs: { to: item.route, flat: "" }
+                  },
+                  [
+                    _c("v-icon", { attrs: { left: "" } }, [
+                      _vm._v(_vm._s(item.icon))
+                    ]),
+                    _vm._v(_vm._s(item.title))
+                  ],
+                  1
+                )
+              }),
+              _vm._v(" "),
+              _vm.isLogged
+                ? _c(
+                    "v-menu",
+                    { attrs: { "offset-y": "" } },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { slot: "activator", flat: "" },
+                          slot: "activator"
+                        },
+                        [
+                          _c(
+                            "span",
+                            [
+                              _c("v-icon", { attrs: { left: "" } }, [
+                                _vm._v("person")
+                              ]),
+                              _vm._v(_vm._s(_vm.username))
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-icon", { attrs: { dark: "" } }, [
+                            _vm._v("arrow_drop_down")
+                          ])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-list",
+                        [
+                          _c(
+                            "v-list-tile",
+                            {
+                              on: {
+                                click: function($event) {
+                                  $event.preventDefault()
+                                  _vm.logout()
+                                }
+                              }
+                            },
+                            [
+                              _c(
+                                "v-list-tile-title",
+                                [
+                                  _c("v-icon", { attrs: { left: "" } }, [
+                                    _vm._v("exit_to_app")
+                                  ]),
+                                  _vm._v("Logout")
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                : _vm._e()
             ],
             2
           )
@@ -65850,6 +65893,12 @@ var router = new __WEBPACK_IMPORTED_MODULE_3_vue_router__["a" /* default */]({
 
 var app = new __WEBPACK_IMPORTED_MODULE_1_vue___default.a({
     el: '#app',
+    data: function data() {
+        return {
+            showAlert: false
+        };
+    },
+
     router: router
 });
 
